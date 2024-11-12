@@ -1,4 +1,4 @@
-# Evaluation of RAG pipeline with MLFlow and Prometheus 2 LLM
+# Evaluation of RAG pipeline with MLFlow
 
 
 This repository contains the code for evaluation of RAG pipeline example. 
@@ -17,7 +17,7 @@ MLFLOW_TRACKING_PASSWORD=password
 ```
 
 ## RAG pipeline
-The pipeline architecture is as follows:
+The pipeline architecture is as follows, it is inspired by by [Langchain's example](https://python.langchain.com/docs/tutorials/rag/#preview):
 
 ![RAG pipeline](<assets/rag-pipeline.png>)
 
@@ -49,24 +49,13 @@ To prepare this dataset, we may implement the following workflow:
 
 ![make synthetic dataset](<assets/synthetic-dataset.png>)
 
-We use scientific article summaries from `jamescalam/ai-arxiv-chunked` dataset which contains chunks of arXiv preprints on NLP and AI research as contexts for QA pair generation. Generated QAs are then evaluated with the help of Prometheus 2 LLM with `prometheus_eval` library.
+We use scientific article summaries from `jamescalam/ai-arxiv-chunked` dataset which contains chunks of arXiv preprints on NLP and AI research as contexts for QA pair generation. Generated QAs are then evaluated with the help of LLM-as-a-judge (`Qwen/Qwen2.5-72B-Instruct`) with `mlflow.genai` metrics.
 
-In the end, we filter 25 dataset items which score 5/5 on all Prometheus 2 evaluatios. You may find the code in `create_eval_dataset.ipynb` notebook and the filtered evaluation dataset at `NLP_eval_dataset`.
+In the end, we filter 25 dataset items which score 5/5 on all Prometheus 2 evaluatios. You may find the code in `create_eval_dataset.ipynb` notebook and the filtered evaluation dataset at `NLP_eval_dataset_qwen2-5`.
 
 ### 2. Prepare the metrics
 
-3 out of 4 metrics for evaluating the generator use *LLM-as-a-judge* whose role in our case is fullfilled by the Prometheus 2 LLM ([see the original article for reference](https://arxiv.org/pdf/2405.01535)). The authors of the original paper published a corresponding python library to use with their LLM, `prometheus_eval`. To integrate this in MLFlow metrics, it is necessary to create a wrapper which utilizes `make_metric()` API from MLFlow. See `custom_metric.py` for `make_prometheus_metric` wrapper implementation.
-
-To use `make_prometheus_metric` wrapper, we need to supply the following:
-- LLM client (`CustomLiteLLM` or `LiteLLM`);
-- grade template (the main template in which we will insert data to evaluate, referencies and grading criteria);
-- grade rubric (datailed description of the grading criteria, see below);
-- grading reference, can be `"ground_truth"`, `"context"` or `"no_reference"`. This defines what referencxe will be used by Prometheus: for ground truth, "reference_answers" column from the dataframe will be used, for context - "retrieved_contexts". Setting it to `"no_reference"` will use empty value (make sure your `grade_template` is not using reference for evaluation in this case);
-- parameters correspond to the inference parameters of the Prometheus LLM;
-
-**NOTE 1:** it is important to be as precise as possible when defining the grading criteria for Prometheus 2 LLM.
-
-**NOTE 2:** To be able to run the evaluation described in this repository, you need to have access to a VM with at least 2 GPUs with 80GBs of VRAM (A100, H100 or similar). Alternatively, you may use smaller Prometheus-2-7B if you have access to an instance with a smaller GPU.
+3 out of 4 metrics for evaluating the generator use *LLM-as-a-judge* whose role in our case is fullfilled by `Qwen2.5-72B-Instruct` LLM served in the Nebius AI-Studio. To integrate this in MLFlow metrics, it is necessary to create a local proxy server (called `deployement` in [`mlflow` documentation](https://mlflow.org/docs/2.15.1/llms/deployments/index.html)). This allows us to either use bult-in metrics in `mlflow.genai` package or create a new mwtric by providing a description and grading prompt to the more generic `mlflow.metrics.genai.make_genai_metric()` constructor, see [documentation](https://mlflow.org/docs/2.15.1/llms/llm-evaluate/index.html#create-llm-as-judge-evaluation-metrics-category-1) for more examples.
 
 ### 3. Evaluate `robustness` with 3 prompt templates
 
