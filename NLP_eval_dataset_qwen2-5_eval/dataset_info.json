@@ -1,0 +1,62 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "inputs": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "answer": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "context": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "document": {
+      "collection_id": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "content": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    },
+    "outputs": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "groundedness/v1/score": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "groundedness/v1/justification": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "relevance/v1/score": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "relevance/v1/justification": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "standalone/v1/score": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "standalone/v1/justification": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": ""
+}

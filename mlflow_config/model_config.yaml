@@ -1,0 +1,9 @@
+endpoints:
+  - name: ai-studio-chat
+    endpoint_type: llm/v1/chat
+    model:
+      provider: openai
+      name: "Qwen/Qwen2.5-72B-Instruct-fast"
+      config:
+        openai_api_key: $NB_AI_STUDIO_KEY
+        openai_api_base: "https://api.studio.nebius.ai/v1/"
