@@ -3,6 +3,13 @@
 
 This repository contains the code for evaluation of RAG pipeline example. 
 
+## Installation
+This code was tested with `Python 3.10.12` and `Python 3.12.5`
+- Install [poetry](https://python-poetry.org/docs/)
+- Run the following to install the necessary dependencies:
+    ```bash
+    poetry install --no-root
+    ```
 ## Setting up your MLFlow
 
 Before running this example, setup your MLFlow tracking by supplying the following environment variables to `.env`:
